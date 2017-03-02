@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lee.realmtest.bean.EventEntity;
 
@@ -92,15 +93,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void save() {
-        realm.beginTransaction();
-        long s = System.currentTimeMillis();
-        realm.insert(mData);
-        long e = System.currentTimeMillis();
-        Log.e("lee", "save耗时：" + (e - s));
-        realm.commitTransaction();
+//        realm.beginTransaction();
+//        long s = System.currentTimeMillis();
+//        realm.insert(mData);
+//        long e = System.currentTimeMillis();
+//        Log.e("lee", "save耗时：" + (e - s));
+//        realm.commitTransaction();
+
+        final long sss = System.currentTimeMillis();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                bgRealm.insertOrUpdate(mData);
+            }
+        }, new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                long eee = System.currentTimeMillis();
+                Log.e("lee", "save---耗时：" + (eee - sss));
+                Toast.makeText(MainActivity.this, "插入成功", Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                Toast.makeText(MainActivity.this, "插入失败", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     long ss;
+    RealmResults<EventEntity> list;
 
     private void fill() {
 
@@ -109,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
          */
 
         ss = System.currentTimeMillis();
-        RealmResults<EventEntity> list = realm.where(EventEntity.class).between("id", 10000, 10100).findAllAsync();
+        list = realm.where(EventEntity.class).between("id", 10000, 10100).findAllAsync();
         list.addChangeListener(callback);
 
 
@@ -143,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 sb.append("\n");
             }
             tvText.setText(sb.toString());
+            list.removeAllChangeListeners();
         }
     };
 }
