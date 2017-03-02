@@ -103,26 +103,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     long ss;
 
     private void fill() {
-        ss = System.currentTimeMillis();
-        RealmResults<EventEntity> list = realm.where(EventEntity.class).between("id", 10000, 10100).findAll();
-        //  list.addChangeListener(callback);
-//        if (list.isLoaded()){
-//            list.removeAllChangeListeners();
-//        }
 
-        long ee = System.currentTimeMillis();
-        Log.e("lee", "fill耗时：" + (ee - ss));
-        tvText.setText("耗时：" + (ee - ss));
-        StringBuilder sb = new StringBuilder();
-        for (EventEntity entity : list) {
-            sb.append(entity.getId());
-            sb.append(entity.getTitle());
-            sb.append(entity.getCity());
-            sb.append("\n");
-        }
-        tvText.setText(sb.toString());
+        /**异步查询
+         *
+         */
+
+        ss = System.currentTimeMillis();
+        RealmResults<EventEntity> list = realm.where(EventEntity.class).between("id", 10000, 10100).findAllAsync();
+        list.addChangeListener(callback);
+
+
+//        long ee = System.currentTimeMillis();
+//        Log.e("lee", "fill耗时：" + (ee - ss));
+//        tvText.setText("耗时：" + (ee - ss));
+//        StringBuilder sb = new StringBuilder();
+//        for (EventEntity entity : list) {
+//            sb.append(entity.getId());
+//            sb.append(entity.getTitle());
+//            sb.append(entity.getCity());
+//            sb.append("\n");
+//        }
+//        tvText.setText(sb.toString());
     }
 
+    /**
+     * 这里调了多次
+     */
     private RealmChangeListener callback = new RealmChangeListener<RealmResults<EventEntity>>() {
         @Override
         public void onChange(RealmResults<EventEntity> element) {
