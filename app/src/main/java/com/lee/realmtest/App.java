@@ -15,6 +15,12 @@ public class App extends Application {
         super.onCreate();
         Realm.init(this);
         RealmConfiguration config = new RealmConfiguration.Builder().build();
+//        RealmConfiguration config = new RealmConfiguration.Builder()
+//                .rxFactory()
+//                .build();
+
         Realm.setDefaultConfiguration(config);
+
+
     }
 }

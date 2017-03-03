@@ -1,6 +1,7 @@
 package com.lee.realmtest.bean;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 /**
@@ -11,6 +12,7 @@ public class EventEntity extends RealmObject {
     @PrimaryKey
     private long id;
     // 活动ID
+    @Ignore
     private String eid;
     // 活动ID
     private String event_id;

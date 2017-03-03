@@ -20,6 +20,8 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button btnCleanAll;
     private Button btnQuery;
     private Button btnThread;
+    private Button btnRX;
     private TextView tvText;
 
     private List<EventEntity> mData;
@@ -83,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnCleanAll = (Button) findViewById(R.id.btn_clean_all);
         btnQuery = (Button) findViewById(R.id.btn_query);
         btnThread = (Button) findViewById(R.id.btn_thread);
+        btnRX = (Button) findViewById(R.id.btn_rx);
 
 
         btnSave.setOnClickListener(this);
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnCleanAll.setOnClickListener(this);
         btnQuery.setOnClickListener(this);
         btnThread.setOnClickListener(this);
+        btnRX.setOnClickListener(this);
     }
 
     @Override
@@ -121,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.btn_thread:
                 thread();
+                break;
+            case R.id.btn_rx:
+                rxQuery();
                 break;
         }
     }
@@ -286,4 +294,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
     }
+
+    private void rxQuery() {
+
+        realm.where(EventEntity.class)
+                .equalTo("city", "北京1")
+                .equalTo("sub_title", "副标题5")
+                .findAllAsync()
+                .sort("id", Sort.DESCENDING)
+                .asObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<RealmResults<EventEntity>>() {
+                    @Override
+                    public void call(RealmResults<EventEntity> eventEntities) {
+                        StringBuilder sb = new StringBuilder();
+                        eventEntities.get(0).setCity("上海");
+                        for (EventEntity entity : list) {
+                            sb.append(entity.toString());
+                            sb.append("\n");
+                        }
+                        tvText.setText(sb.toString());
+                    }
+                });
+    }
+
+
 }
