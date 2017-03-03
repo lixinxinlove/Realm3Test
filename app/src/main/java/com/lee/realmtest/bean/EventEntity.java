@@ -23,7 +23,8 @@ public class EventEntity extends RealmObject {
 
     private String city;
 
-    public EventEntity(){}
+    public EventEntity() {
+    }
 
     public EventEntity(long id, String eid, String event_id, String title, String sub_title, String detail_url, String city) {
         this.id = id;
@@ -89,5 +90,18 @@ public class EventEntity extends RealmObject {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", eid='" + eid + '\'' +
+                ", event_id='" + event_id + '\'' +
+                ", title='" + title + '\'' +
+                ", sub_title='" + sub_title + '\'' +
+                ", detail_url='" + detail_url + '\'' +
+                ", city='" + city + '\'' +
+                '}';
     }
 }
