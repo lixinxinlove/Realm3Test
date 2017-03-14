@@ -41,13 +41,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Realm realm;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         realm = Realm.getDefaultInstance();
+
         initView();
         initData();
+
+        final EventEntity entity=new EventEntity(999,"9999","9999","9999","9999","9999","999");
+
+        App.realm2.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.insertOrUpdate(entity);
+            }
+        });
     }
 
     private void initData() {
@@ -61,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String city;
         Random random = new Random();
         mData = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100; i++) {
             id = 10000 + i;
             eid = "T" + i;
             event_id = "G" + i;

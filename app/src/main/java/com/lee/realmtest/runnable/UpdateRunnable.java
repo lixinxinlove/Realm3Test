@@ -3,7 +3,6 @@ package com.lee.realmtest.runnable;
 import com.lee.realmtest.bean.EventEntity;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -15,29 +14,20 @@ public class UpdateRunnable implements Runnable {
     @Override
     public void run() {
 
-        RealmConfiguration config = new RealmConfiguration.Builder().build();
-        Realm mRealm = Realm.getInstance(config);
-
-      //  Log.e("lee", "save---耗时：" + (eee - sss));
-        final RealmResults<EventEntity> mData;
-        mRealm.beginTransaction();
-        mData = mRealm.where(EventEntity.class).findAll();
-        for (int i = 0; i < mData.size(); i++) {
-            mData.get(i).setCity("天津"+i);
+        Realm mRealm = null;
+        try {
+            mRealm = Realm.getDefaultInstance();
+            final RealmResults<EventEntity> mData;
+            mRealm.beginTransaction();
+            mData = mRealm.where(EventEntity.class).findAll();
+            for (int i = 0; i < mData.size(); i++) {
+                mData.get(i).setCity("天津" + i);
+            }
+            mRealm.commitTransaction();
+        } finally {
+            if (mRealm != null) {
+                mRealm.close();
+            }
         }
-        mRealm.commitTransaction();
-
-
-//        final RealmResults<EventEntity> mData;
-//        mData = mRealm.where(EventEntity.class).findAll();
-//        mRealm.executeTransaction(new Realm.Transaction() {
-//            @Override
-//            public void execute(Realm realm) {
-//                for (int i = 0; i < mData.size(); i++) {
-//                    mData.get(i).setCity("天津");
-//                }
-//            }
-//        });
-
     }
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 import com.lee.realmtest.bean.EventEntity;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 /**
@@ -13,20 +12,21 @@ import io.realm.RealmResults;
  */
 public class QueryRunnable implements Runnable {
 
-
     @Override
     public void run() {
-        RealmConfiguration config = new RealmConfiguration.Builder().build();
-        Realm mRealm = Realm.getInstance(config);
-
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<EventEntity> mData = realm.where(EventEntity.class).findAll();
-                for (EventEntity entity : mData) {
-                    Log.e("QueryRunnable", "id-" + entity.getId() + "--city--" + entity.getCity());
-                }
+        Realm mRealm = null;
+        try {
+            mRealm = Realm.getDefaultInstance();
+            mRealm.beginTransaction();
+            RealmResults<EventEntity> mData = mRealm.where(EventEntity.class).findAll();
+            for (EventEntity entity : mData) {
+                Log.e("QueryRunnable", "id-" + entity.getId() + "--city--" + entity.getCity());
             }
-        });
+            mRealm.commitTransaction();
+        } finally {
+            if (mRealm != null) {
+                mRealm.close();
+            }
+        }
     }
 }

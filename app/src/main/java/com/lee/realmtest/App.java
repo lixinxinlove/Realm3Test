@@ -10,17 +10,23 @@ import io.realm.RealmConfiguration;
  */
 public class App extends Application {
 
+
+    public static Realm realm2;
+
     @Override
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-        RealmConfiguration config = new RealmConfiguration.Builder().build();
-//        RealmConfiguration config = new RealmConfiguration.Builder()
-//                .rxFactory()
-//                .build();
-
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .name("lee.realm")
+                .build();
         Realm.setDefaultConfiguration(config);
 
 
+        RealmConfiguration config2 = new RealmConfiguration.Builder()
+                .name("lee2.realm")
+                .build();
+
+        realm2 = Realm.getInstance(config2);
     }
 }
